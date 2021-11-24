@@ -1,2 +1,4 @@
 build/
 .vscode/
+Eigen/
+include/Eigen/
