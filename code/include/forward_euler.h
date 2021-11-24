@@ -12,5 +12,14 @@
 // 计算位置q和速度qdot
 template<typename FORCE> 
 inline void forward_euler(Eigen::VectorXd &q, Eigen::VectorXd &qdot, double dt, double mass,  FORCE &force) {
+	Eigen::VectorXd f;                  // 用于存储力f的矩阵
+    Eigen::VectorXd q_new;              // 用于存储经过dt后位移q的值的矩阵
+    Eigen::VectorXd qdot_new;           // 用于存储经过dt后速度qdot的值的矩阵
+	force(f, q, qdot);                  // 计算这时的弹簧给球的力f=-kx，存储在f中
 
+    qdot_new = (f / mass) * dt + qdot;  // v1 = a * dt + v0
+    q_new = qdot * dt + q;              // x1 = v0 * dt + x0
+
+    q = q_new;                          // 将新的q通过引用传出
+    qdot = qdot_new;                    // 将新的qdot通过引用传出
 }
