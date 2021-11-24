@@ -31,7 +31,7 @@ bool simulate(igl::opengl::glfw::Viewer & viewer) {
     
     //take a time step
 
-    // 函数force：使用 k(即stiffness)和 x(此处即q)计算 f=-kx ，以1x1矩阵的形式存储在引用的第一个参数中
+    // 函数force：使用 k(即stiffness)和 x(此处即q-l)计算 f=-kx ，以1x1矩阵的形式存储在引用的第一个参数中
     //    ·force以建立一个lambda函数并存储的方式实现
     auto force = [](Eigen::VectorXd &f, const Eigen::VectorXd &q, const Eigen::VectorXd &qdot) { 
         dV_spring_particle_particle_dq(f, q, stiffness, l); 
