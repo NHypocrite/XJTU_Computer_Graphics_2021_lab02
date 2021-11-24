@@ -18,6 +18,8 @@
 Eigen::VectorXd q;              // q为位移
 Eigen::VectorXd q_dot;          // q 的一阶导，可认为是 v
 
+Eigen::VectorXd l;              // 弹簧原长
+
 //VectorXd: 动态长度double型列向量（行数目任意，列数为1的double矩阵）
 
 double mass = 1.0;              // 物体质量
@@ -32,7 +34,7 @@ bool simulate(igl::opengl::glfw::Viewer & viewer) {
     // 函数force：使用 k(即stiffness)和 x(此处即q)计算 f=-kx ，以1x1矩阵的形式存储在引用的第一个参数中
     //    ·force以建立一个lambda函数并存储的方式实现
     auto force = [](Eigen::VectorXd &f, const Eigen::VectorXd &q, const Eigen::VectorXd &qdot) { 
-        dV_spring_particle_particle_dq(f, q, stiffness); 
+        dV_spring_particle_particle_dq(f, q, stiffness, l); 
         f *= -1; 
     };
 
@@ -86,10 +88,14 @@ int main(int argc, char **argv) {
     //setup simulation variables
     q.resize(1);
     q_dot.resize(1);
+    l.resize(1);
 
     q_dot(0) = 0;                   // 初始速度=0m/s
     q(0) = 1;                       // 初始位移=1m
-    
+    l(0) = 0;                       // 弹簧原长默认为0m
+    if(argc > 2) {
+        l(0) = atoi(argv[2]);      // 弹簧原长可由第二个参数传入
+    }
     //setup libigl viewer and activate 
     Visualize::setup(q, q_dot);
     Visualize::viewer().callback_post_draw = &simulate;
