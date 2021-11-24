@@ -15,19 +15,32 @@
 #include <igl/readOBJ.h>
 
 //simulation parameters
-Eigen::VectorXd q;
-Eigen::VectorXd q_dot;
+Eigen::VectorXd q;              // q为位移
+Eigen::VectorXd q_dot;          // q 的一阶导，可认为是 v
 
-double mass = 1.0;
-double stiffness = 100.0; 
-double dt = 1e-2; 
-int integrator_type = 0;
+//VectorXd: 动态长度double型列向量（行数目任意，列数为1的double矩阵）
+
+double mass = 1.0;              // 物体质量
+double stiffness = 100.0;       // 硬度，胡克定律的k
+double dt = 1e-2;               // 时间微分尺度
+int integrator_type = 0;        // 默认积分方法
 
 bool simulate(igl::opengl::glfw::Viewer & viewer) {
     
     //take a time step
-    auto force = [](Eigen::VectorXd &f, const Eigen::VectorXd &q, const Eigen::VectorXd &qdot) { dV_spring_particle_particle_dq(f, q, stiffness); f *= -1; };
-    auto stiff = [](Eigen::MatrixXd &k, const Eigen::VectorXd &q, const Eigen::VectorXd &qdot) { d2V_spring_particle_particle_dq2(k, q, stiffness); k *= -1; };
+
+    // 函数force：使用 k(即stiffness)和 x(此处即q)计算 f=-kx ，以1x1矩阵的形式存储在引用的第一个参数中
+    //    ·force以建立一个lambda函数并存储的方式实现
+    auto force = [](Eigen::VectorXd &f, const Eigen::VectorXd &q, const Eigen::VectorXd &qdot) { 
+        dV_spring_particle_particle_dq(f, q, stiffness); 
+        f *= -1; 
+    };
+
+    // 函数stiff：获得 -k(即stiffness)，以1x1矩阵的形式存储在引用的第一个参数中
+    auto stiff = [](Eigen::MatrixXd &k, const Eigen::VectorXd &q, const Eigen::VectorXd &qdot) { 
+        d2V_spring_particle_particle_dq2(k, q, stiffness); 
+        k *= -1; 
+    };
 
     switch(integrator_type) {
         case 0:
@@ -74,9 +87,9 @@ int main(int argc, char **argv) {
     q.resize(1);
     q_dot.resize(1);
 
-    q_dot(0) = 0;
-    q(0) = 1; 
- 
+    q_dot(0) = 0;                   // 初始速度=0m/s
+    q(0) = 1;                       // 初始位移=1m
+    
     //setup libigl viewer and activate 
     Visualize::setup(q, q_dot);
     Visualize::viewer().callback_post_draw = &simulate;

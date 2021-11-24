@@ -9,7 +9,7 @@
 //Output:
 //  q - set q to the updated generalized coordinate using Forward Euler time integration
 //  qdot - set qdot to the updated generalized velocity using Forward Euler time integration
-
+// 计算位置q和速度qdot
 template<typename FORCE> 
 inline void forward_euler(Eigen::VectorXd &q, Eigen::VectorXd &qdot, double dt, double mass,  FORCE &force) {
 
