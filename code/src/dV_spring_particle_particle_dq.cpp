@@ -4,5 +4,5 @@ void dV_spring_particle_particle_dq(Eigen::VectorXd &dV, const Eigen::VectorXd &
 
     dV.resize(1);           // f为一个数，当存储在一个1x1的矩阵中
     //compute f
-    dV = stiffness * (q-l); // f = k * x
+    dV = stiffness * (q); // f = k * x
 }
